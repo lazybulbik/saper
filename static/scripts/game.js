@@ -8,9 +8,9 @@ const bombs_precent = 0.2
 socketio.emit('join', {'room': room})
 
 
-function feelTabel(el, tableData, isMine = true) {
+function fillTable(el, tableData, isMine = true) {
     el.innerHTML = ''
-    console.log('Feel table')
+    console.log('Fill table')
     for (let y = 0; y < tableData.length; y++) {
         let row = document.createElement('tr')
         for (let x = 0; x < tableData[y].length; x++) {
@@ -88,7 +88,7 @@ document.getElementById('open-btn').addEventListener('click', (event) => {
 
 
 socketio.on('update-field', (tableData) => {
-    feelTabel(document.getElementById('field'), tableData)
+    fillTable(document.getElementById('field'), tableData)
 
     // console.log(tableData)
 })
@@ -102,7 +102,7 @@ socketio.on('update-enemies-fields', (tableData) => {
     for (let i = 0; i < tableData.length; i++) {
         let table = document.createElement('table')
         
-        feelTabel(table, tableData[i], false)
+        fillTable(table, tableData[i], false)
         tableList.appendChild(table)
     };
 })
@@ -112,5 +112,5 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Game started')
     const field = Array.from({ length: 15 }, () => Array(15).fill({ opened: false, value: -1, flag: false }));
     // console.log(field)
-    feelTabel(document.getElementById('field'), field)
+    fillTable(document.getElementById('field'), field)
 })
