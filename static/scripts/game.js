@@ -87,6 +87,14 @@ document.getElementById('open-btn').addEventListener('click', (event) => {
     document.getElementById('flag-btn').classList.remove('selected')
 })
 
+document.getElementById('upd-btn').addEventListener('click', (e) => {
+    console.log("Empty the field.");
+
+    socketio.emit('empty', {'room': room})
+
+    const field = genEmptyField();
+    fillTable(document.getElementById('field'), field)
+})
 
 socketio.on('update-field', (tableData) => {
     fillTable(document.getElementById('field'), tableData)
@@ -111,7 +119,7 @@ socketio.on('update-enemies-fields', (tableData) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Game started')
-    const field = Array.from({ length: 15 }, () => Array(15).fill({ opened: false, value: -1, flag: false }));
+    const field = genEmptyField();
     // console.log(field)
     fillTable(document.getElementById('field'), field)
 })
