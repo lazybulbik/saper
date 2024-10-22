@@ -1,163 +1,34 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Сапер - Комната {{ room }}</title>
-    <style>
-        body {
-            margin: 0;
-            padding-bottom: 60px; /* Отступ для кнопок внизу экрана */
-        }
-        table { border-collapse: collapse; }
-        td {
-            width: 30px; height: 30px;
-            text-align: center; vertical-align: middle;
-            border: 1px solid #000;
-            user-select: none;
-        }
-        .revealed { background-color: #ccc; }
-        #action-buttons {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            padding: 10px 0;
-            border-top: 1px solid #ccc;
-        }
-        #action-buttons button {
-            margin: 0 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-        .selected {
-            background-color: #007BFF;
-            color: white;
-        }
-        @media (min-width: 768px) {
-            #action-buttons {
-                display: none; /* Скрываем кнопки на больших экранах */
-            }
-            body {
-                padding-bottom: 0;
-            }
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.js"></script>
+
+    <input type="hidden" id="room" value="{{ room }}">
 </head>
 <body>
-    <h1>Комната {{ room }}</h1>
-    <div id="game-board"></div>
-    <h2>Поля оппонентов</h2>
-    <div id="opponents"></div>
-    <!-- Кнопки действий для мобильных устройств -->
-    <div id="action-buttons">
-        <button id="reveal-button" class="selected">Открыть</button>
-        <button id="flag-button">Флаг</button>
+    <h1 class="header">Комната {{ room }}</h1>
+    <div class="game-container">
+        <div class="block" id="my" style="width: fit-content;">
+            <table id="field"></table>            
+        </div>
+        <div class="row center" style="width: fit-content; max-width: 90%; flex-wrap: wrap; margin-top: 4%; background-color: var(--block-color);" id="enemies-fields">
+        </div>
     </div>
-    <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
-    <script>
-        var socket = io();
-        var room = "{{ room }}";
-        var actionMode = 'reveal'; // Режим действия по умолчанию
 
-        socket.on('connect', function() {
-            socket.emit('join', {'room': room});
-        });
+    <div class="control">
+        <div class="action-btn" id="flag-btn">🏴</div>
+        <div class="action-btn" id="open-btn">👆</div>
+    </div>
 
-        socket.on('load_board', function(board) {
-            renderBoard(board);
-        });
-
-        socket.on('update_opponents', function(boards) {
-            $('#opponents').empty();
-            for (var sid in boards) {
-                var board = boards[sid];
-                var table = $('<table></table>');
-                for (var r = 0; r < board.length; r++) {
-                    var tr = $('<tr></tr>');
-                    for (var c = 0; c < board[r].length; c++) {
-                        var td = $('<td></td>').text(board[r][c]);
-                        tr.append(td);
-                    }
-                    table.append(tr);
-                }
-                $('#opponents').append(table);
-            }
-        });
-
-        socket.on('game_over', function() {
-            alert('Игра окончена! Вы наткнулись на мину 💣');
-            // Здесь можно реализовать перезапуск игры или переход на другую страницу
-        });
-
-        function renderBoard(board) {
-            var table = $('<table></table>');
-            for (var r = 0; r < board.length; r++) {
-                var tr = $('<tr></tr>');
-                for (var c = 0; c < board[r].length; c++) {
-                    var cell = board[r][c];
-                    var td = $('<td></td>')
-                        .attr('id', 'cell-' + r + '-' + c)
-                        .data('cell', [r, c]);
-
-                    if (cell['revealed']) {
-                        td.addClass('revealed');
-                        if (cell['mine']) {
-                            td.text('💣');
-                        } else {
-                            td.text(cell['adjacent'] > 0 ? cell['adjacent'] : '');
-                        }
-                    } else if (cell['flagged']) {
-                        td.text('🏴');
-                    } else {
-                        td.text('');
-                    }
-
-                    td.on('click', function(e) {
-                        e.preventDefault();
-                        var cell = $(this).data('cell');
-                        if (isMobileDevice()) {
-                            if (actionMode === 'reveal') {
-                                socket.emit('reveal', {'room': room, 'cell': cell});
-                            } else if (actionMode === 'flag') {
-                                socket.emit('flag', {'room': room, 'cell': cell});
-                            }
-                        } else {
-                            socket.emit('reveal', {'room': room, 'cell': cell});
-                        }
-                    });
-
-                    td.on('contextmenu', function(e) {
-                        e.preventDefault();
-                        var cell = $(this).data('cell');
-                        socket.emit('flag', {'room': room, 'cell': cell});
-                    });
-
-                    tr.append(td);
-                }
-                table.append(tr);
-            }
-            $('#game-board').html(table);
-        }
-
-        function isMobileDevice() {
-            return window.innerWidth < 768;
-        }
-
-        // Обработчики кнопок действий
-        $('#reveal-button').on('click', function() {
-            actionMode = 'reveal';
-            $('#reveal-button').addClass('selected');
-            $('#flag-button').removeClass('selected');
-        });
-
-        $('#flag-button').on('click', function() {
-            actionMode = 'flag';
-            $('#flag-button').addClass('selected');
-            $('#reveal-button').removeClass('selected');
-        });
-    </script>
+    <script src="/static/scripts/game.js"></script>
 </body>
 </html>

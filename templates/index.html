@@ -1,13 +1,35 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Сапер</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.js"></script>
 </head>
 <body>
-    <h1>Создать или присоединиться к комнате</h1>
-    <form method="post">
-        <input type="text" name="room" placeholder="Название комнаты" required>
-        <button type="submit">Играть</button>
-    </form>
+    <div class="inner">
+        <h1 class="header">Сапопер</h1>
+
+        <div class="block">
+            <button class="accent" id="create-room">+ Новая комната</button>
+            <input type="text" placeholder="Название комнаты" id="room-name" >
+            <h3 class="section-header">Список комнат</h3>
+            <div class="section-separator"></div>
+
+            <div class="column" id="rooms"></div>
+        </div>
+    </div>
+
+    <script src="/static/scripts/index.js"></script>
 </body>
 </html>

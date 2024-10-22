@@ -1,96 +1,283 @@
+:root {
+    --background-color: #2f4858;
+    --accent-color: #f99693;
+    --button-color: #a5749d;
+    --cell-color: #d4829d;
+    --text-color: #fff;
+
+    --block-color: #4a5977;
+    --section-separator-color: #746890;
+}
+
 * {
     margin: 0;
     box-sizing: border-box;
     transition: all 0.3s ease-in-out;
-    text-align: center;
+    /* text-align: center; */
+    color: var(--text-color);
+    font-family: 'Raleway', sans-serif;
 }
 
-.inner {
-    display: flex;
-    flex-direction: column;
-    padding: 3%;
-    align-items: center;
-    justify-items: center;    
-}
-
-.game-list {
-    margin-top: 2%;
+body {
+    background-color: var(--background-color);
 
     display: flex;
     flex-direction: column;
-    width: 50%;
-    background-color: rgb(172, 172, 172);
-    padding: 1.5%;
-    border-radius: 15px;
-
-    /* justify-content: center; */
     align-items: center;
-    gap: 5px;
-    
-    user-select: none;
+    justify-content: center;
+    overflow-x: auto;
+
 }
-.game {
-    /* dis */
-    text-align: center;
-    border: 1px solid black;
-    border-radius: 15px;
-    padding: 2%;
-    font-size: 20px;
-    width: 50%;
-}
+
 
 button {
-    margin-top: 5%;
-    padding: 1%;
-    font-size: 20px;
+    background-color: transparent;
     border: none;
-    border-radius: 10px;
-    padding: 20px 40px;
-    user-select: none;
+    text-align: left;
+    padding: 1.5% 2%;
+    border-radius: 5px;
 
     cursor: pointer;
+    font-weight: 500;
 }
 
-button:active {
-    transform: scale(0.95);
+button.accent {
+    background-color: var(--accent-color);
 }
 
-@media (max-width: 600px) {
-    .playground {
+input {
+    background-color: var(--background-color);
+    border: none;
+    border-radius: 5px;
+
+    padding: 0.8% 2%;
+}
+
+.section-separator {
+    width: 100%;
+    height: 2px;
+    background-color: var(--section-separator-color);
+    
+
+    margin-bottom: 2%;
+}
+
+.section-header {
+    text-align: left;
+    margin-top: 2%;
+    /* margin-left: 3%; */
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shake {
+    animation: shake 0.5s;
+}
+
+.cell.closed {
+    background-color: var(--cell-color);
+}
+
+.cell.opened {
+    background-color: transparent;
+}
+
+@keyframes shake {
+    0% {background-color: red;}
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+@media(min-width: 1000px) {
+    .inner {
+        width: 80%;
+    
         display: flex;
         flex-direction: column;
-        width: 100%;
-
-        background-color: rgb(172, 172, 172);
+        padding: 1% 3%;
+        align-items: center;
+        justify-items: center;
     }
-}
-
-@media (min-width: 600px) {
-    .playground {
+    
+    .title {
+        text-align: center;
+    }
+    
+    .block {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        padding: 2%;
+        margin-top: 4%;
+    
+        background-color: var(--block-color);
+        width: 100%;
+        
+        border-radius: 10px;
+
+        gap: 10px;
+    }
+
+    .room {
+        border: #2f4858 1px solid;
+        border-radius: 10px;
+        padding: 2%;
+
+        cursor: pointer;
+    }
+
+    .game-container {
         width: 100%;
 
-        background-color: rgb(172, 172, 172);
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+    .cell {
+        width: 25px;
+        height: 25px;
+        border: 1px solid var(--background-color);
+
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .control {
+        display: none;
     }
 }
+@media(max-width: 999px) {
+    .inner {
+        width: 100%;
 
-.field {
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: 2px;
+        display: flex;
+        flex-direction: column;
+        padding: 1% 3%;
+        /* align-items: center; */
+        justify-items: center;
 
-    /* width: 50%; */
+        text-align: left;
+    }
 
-    display: grid;
-    grid-template-columns: repeat(15, 50%);
-    grid-template-rows: repeat(15, 50%);
-}
+    .header {
+        text-align: left;
+        margin-left: 3%;
+    }
+    
 
-.block {
-    width: 99%;
-    height: 99%;
-    background-color: rgb(255, 255, 255);
-    margin: 1px;
-    border-radius: 5px;
+    .block {
+        display: flex;
+        flex-direction: column;
+        padding: 2%;
+        margin-top: 2%;
+
+        background-color: var(--block-color);
+        width: 100%;
+        
+        border-radius: 10px;
+
+        gap: 10px;
+    }
+
+    button {
+        padding: 3%;
+    }
+
+    input {
+        padding: 3%;
+    }
+    input:focus {
+        padding: 5%;
+        font-size: 20px;
+        outline: none;
+    }
+
+    .room {
+        border: #2f4858 1px solid;
+        border-radius: 10px;
+        padding: 3%;
+
+        cursor: pointer;
+    }
+
+    .game-container {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+    .cell {
+        width: 20px;
+        height: 20px;
+        border: 1px solid var(--background-color);
+
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .control {
+        position: fixed;
+        bottom: 0;
+        width: 200px;
+        height: 80px;
+        background-color: var(--button-color);
+
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        border-radius: 10px;
+        padding: 1.5%;
+    }
+    .action-btn {
+        background-color: transparent;
+        border: var(--background-color) 1px solid;
+        
+        width: 49%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 10px;
+    }
+
+    .action-btn.selected {
+        background-color: var(--accent-color);
+    }
 }
