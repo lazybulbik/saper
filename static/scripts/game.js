@@ -7,6 +7,7 @@ const bombs_precent = 0.2
 
 socketio.emit('join', {'room': room})
 
+var genEmptyField = () => Array.from({ length: 15 }, () => Array(15).fill({ opened: false, value: -1, flag: false }));
 
 function fillTable(el, tableData, isMine = true) {
     el.innerHTML = ''
