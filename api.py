@@ -69,6 +69,10 @@ def create_field(data):
     for user in fields:
         socketio.emit('update-enemies-fields', fields[user], to=user)    
 
+@socketio.on('empty')
+def empty_field(data):
+    room_name = data['room']
+    ROOMS[room_name][request.sid]['field'] = None
 
 @socketio.on('disconnect')
 def disconnect():
