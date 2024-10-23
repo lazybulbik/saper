@@ -1,11 +1,16 @@
 socketio = io();
-const room = document.getElementById('room').value;
+const ROOM = document.getElementById('room').value;
+socketio.emit('join', {'room': ROOM})
 
-const rows = 15
-const cols = 15
-const bombs_precent = 0.2
+const BOMBS_PERCENT = 0.2
 
-socketio.emit('join', {'room': room})
+let rows = 15
+let cols = 15
+
+const FLAG_BTN = document.getElementById('flag-btn')
+const OPEN_BTN = document.getElementById('open-btn')
+
+const RESET_BTN = document.getElementById('reset-btn')
 
 var genEmptyField = () => Array.from({ length: rows }, () => Array(cols).fill({ opened: false, value: -1, flag: false }));
 
@@ -57,40 +62,36 @@ function fillTable(el, tableData, isMine = true) {
     }
 }
 
-function onCellClick(event) {
-    controlBtns = document.querySelectorAll('.action-btn')
+function onCellRightClick(event) {
+    event.preventDefault()
+    onCellClick(event, 'flag')
+}
 
-    if (controlBtns[0].classList.contains('selected')) {
-        onCellRightClick(event)
-        return
+function onCellClick(event, action) {
+    if (action == undefined)
+    {
+        action = FLAG_BTN.classList.contains('selected') ? 'flag' : 'open'
     }
 
     const x = event.target.getAttribute('data-x')
     const y = event.target.getAttribute('data-y')
-    socketio.emit('click', {'x': x, 'y': y, 'room': room, 'rows': rows, 'cols': cols, 'bombs_precent': bombs_precent, 'action': 'open'})
+    socketio.emit('click', {'x': x, 'y': y, 'room': ROOM, 'rows': rows, 'cols': cols, 'bombs_precent': BOMBS_PERCENT, 'action': action})
 }
 
-function onCellRightClick(event) {    
-    event.preventDefault()
-    const x = event.target.getAttribute('data-x')
-    const y = event.target.getAttribute('data-y')
-    socketio.emit('click', {'x': x, 'y': y, 'room': room, 'rows': rows, 'cols': cols, 'bombs_precent': bombs_precent, 'action': 'flag'})
-}
-
-document.getElementById('flag-btn').addEventListener('click', (event) => {
-    event.target.classList.toggle('selected')
-    document.getElementById('open-btn').classList.remove('selected')
+FLAG_BTN.addEventListener('click', (event) => {
+    FLAG_BTN.classList.toggle('selected')
+    OPEN_BTN.classList.remove('selected')
 })
 
-document.getElementById('open-btn').addEventListener('click', (event) => {
-    event.target.classList.toggle('selected')
-    document.getElementById('flag-btn').classList.remove('selected')
+OPEN_BTN.addEventListener('click', (event) => {
+    OPEN_BTN.classList.toggle('selected')
+    FLAG_BTN.classList.remove('selected')
 })
 
-document.getElementById('upd-btn').addEventListener('click', (e) => {
+RESET_BTN.addEventListener('click', (e) => {
     console.log("Empty the field.");
 
-    socketio.emit('empty', {'room': room})
+    socketio.emit('empty', {'room': ROOM})
 
     const field = genEmptyField();
     fillTable(document.getElementById('field'), field)
@@ -98,8 +99,6 @@ document.getElementById('upd-btn').addEventListener('click', (e) => {
 
 socketio.on('update-field', (tableData) => {
     fillTable(document.getElementById('field'), tableData)
-
-    // console.log(tableData)
 })
 
 socketio.on('update-enemies-fields', (tableData) => {
