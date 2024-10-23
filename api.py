@@ -64,19 +64,15 @@ def create_field(data):
 
 
     emit('update-field', ROOMS[room_name][request.sid]['field'])
+    updateFields(room_name)
 
-    fields = utils.get_fields_for_room(room_name)
-    for user in fields:
-        socketio.emit('update-enemies-fields', fields[user], to=user)    
 
 @socketio.on('empty')
 def empty_field(data):
     room_name = data['room']
     ROOMS[room_name][request.sid]['field'] = None
     
-    fields = utils.get_fields_for_room(room_name)
-    for user in fields:
-        socketio.emit('update-enemies-fields', fields[user], to=user)
+    updateFields(room_name)
 
 @socketio.on('disconnect')
 def disconnect():
@@ -89,8 +85,11 @@ def disconnect():
 
             emit('update-rooms', {'names': list(ROOMS.keys())}, broadcast=True)
 
-            fields = utils.get_fields_for_room(room=room)
-            for user in fields:
-                socketio.emit('update-enemies-fields', fields[user], to=user)
+            updateFields(room)
 
     print('Client disconnected')
+
+def updateFields(room):
+    fields = utils.get_fields_for_room(room=room)
+    for user in fields:
+        socketio.emit('update-enemies-fields', fields[user], to=user)
